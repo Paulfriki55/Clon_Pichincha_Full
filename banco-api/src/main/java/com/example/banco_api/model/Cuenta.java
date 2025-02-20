@@ -3,6 +3,7 @@ package com.example.banco_api.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonBackReference; // Importa JsonBackReference
 
 @Entity
 @Table(name = "cuentas")
@@ -25,6 +26,7 @@ public class Cuenta {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference // Añade JsonBackReference AQUÍ
     private Usuario usuario;
 
     @OneToMany(mappedBy = "cuenta", cascade = CascadeType.ALL, orphanRemoval = true)

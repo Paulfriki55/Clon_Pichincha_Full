@@ -1,6 +1,7 @@
 package com.example.banco_api.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference; // Importa JsonManagedReference
 import java.util.List;
 
 @Entity
@@ -20,6 +21,7 @@ public class Usuario {
     private String contraseña; // ¡OJO! En la vida real, NO guardes contraseñas en texto plano. Hashear con bcrypt o similar. Aquí para simplificar.
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // Añade JsonManagedReference AQUÍ
     private List<Cuenta> cuentas;
 
     public Long getId() {

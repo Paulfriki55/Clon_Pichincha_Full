@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # MongoDB (Imagen oficial sin Alpine)
+  mongo:
+    image: mongo:latest  # Usamos la versión más reciente oficial de MongoDB
+    container_name: mongo
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+    ports:
+      - "27017:27017"  # Exponemos el puerto para acceso externo
+    volumes:
+      - mongo-data:/data/db  # Persistencia de datos en volumen
+    networks:
+      - mynetwork
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+  # PostgreSQL (Imagen oficial)
+  postgres:
+    image: postgres:latest  # Usamos la versión más reciente oficial de PostgreSQL
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespassword
+      - POSTGRES_DB=testdb
+    ports:
+      - "5432:5432"  # Exponemos el puerto para acceso externo
+    volumes:
+      - postgres-data:/var/lib/postgresql/data  # Persistencia de datos en volumen
+    networks:
+      - mynetwork
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+
+volumes:
+  mongo-data:
+    driver: local
+  postgres-data:
+    driver: local
+
+networks:
+  mynetwork:
+    driver: bridge
