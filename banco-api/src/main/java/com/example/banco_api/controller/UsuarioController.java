@@ -1,6 +1,5 @@
 package com.example.banco_api.controller;
 
-
 import com.example.banco_api.model.Usuario;
 import com.example.banco_api.service.UsuarioService;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -8,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 import java.util.Map;
 
 @RestController
@@ -20,7 +19,7 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @PostMapping("/registrar")
-    public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> registroRequest) {
+    public ResponseEntity<?> registrarUsuario(@RequestBody Map<String, String> registroRequest) { // Changed to ResponseEntity<?>
         try {
             Usuario usuario = usuarioService.crearUsuario(
                     registroRequest.get("nombre"),
@@ -38,13 +37,13 @@ public class UsuarioController {
     }
 
     @PostMapping("/autenticar")
-    public ResponseEntity<?> autenticarUsuario(@RequestBody Map<String, String> autenticacionRequest) {
+    public ResponseEntity<?> autenticarUsuario(@RequestBody Map<String, String> autenticacionRequest) { // Changed to ResponseEntity<?>
         try {
-            String token = usuarioService.autenticarUsuario(
+            Usuario usuarioAutenticado = usuarioService.autenticarUsuario(
                     autenticacionRequest.get("correo"),
                     autenticacionRequest.get("contraseña")
             );
-            return ResponseEntity.ok(Map.of("message", token)); // Devuelve un mensaje de éxito (o token real en un sistema JWT)
+            return ResponseEntity.ok(usuarioAutenticado);
         } catch (FirebaseAuthException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Autenticación fallida: " + e.getMessage());
         } catch (IllegalArgumentException e) {

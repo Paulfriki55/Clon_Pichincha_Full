@@ -8,7 +8,6 @@ import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.google.firebase.auth.AuthErrorCode;
-
 import java.util.List;
 
 @Service
@@ -33,12 +32,14 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public String autenticarUsuario(String correo, String contraseña) throws FirebaseAuthException {
+    public Usuario autenticarUsuario(String correo, String contraseña) throws FirebaseAuthException { // <-- Returns Usuario
         try {
             UserRecord userRecord = FirebaseAuth.getInstance().getUserByEmail(correo);
-            // En un sistema real, aquí generarías un token JWT tras verificar las credenciales en Firebase.
-            // Para simplificar, solo retornamos un mensaje de éxito.
-            return "Autenticación exitosa para el usuario: " + userRecord.getEmail();
+            Usuario usuario = obtenerUsuarioPorCorreo(correo);
+            if (usuario == null) {
+                throw new IllegalArgumentException("Usuario no encontrado en la base de datos local.");
+            }
+            return usuario; // <-- Returns Usuario object
         } catch (FirebaseAuthException e) {
             if (e.getAuthErrorCode() == AuthErrorCode.USER_NOT_FOUND) {
                 throw new IllegalArgumentException("Usuario no encontrado");
@@ -49,7 +50,6 @@ public class UsuarioService {
             }
         }
     }
-
 
     public Usuario obtenerUsuarioPorCorreo(String correo) {
         return usuarioRepository.findByCorreo(correo).orElse(null);
