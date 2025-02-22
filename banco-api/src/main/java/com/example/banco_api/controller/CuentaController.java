@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -62,6 +63,27 @@ public class CuentaController {
             return ResponseEntity.ok(cuenta);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Cuenta>> obtenerTodasLasCuentas() {
+        List<Cuenta> cuentas = cuentaService.obtenerTodasLasCuentas();
+        return ResponseEntity.ok(cuentas);
+    }
+
+    @PostMapping("/{numeroCuenta}/depositar")
+    public ResponseEntity<?> depositarEnCuenta(
+            @PathVariable String numeroCuenta,
+            @RequestBody Map<String, String> depositoRequest) {
+        BigDecimal monto = new BigDecimal(depositoRequest.get("monto"));
+        try {
+            cuentaService.depositar(numeroCuenta, monto);
+            return ResponseEntity.ok(Map.of("message", "Depósito realizado con éxito."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al realizar el depósito: " + e.getMessage());
         }
     }
 }

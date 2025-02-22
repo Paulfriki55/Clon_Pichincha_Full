@@ -3,6 +3,7 @@ package com.example.banco_api.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonBackReference; // Import JsonBackReference
 
 @Entity
 @Table(name = "transacciones")
@@ -26,6 +27,7 @@ public class Transaccion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cuenta_id", nullable = false)
+    @JsonBackReference  // <--- **CRITICAL: Make sure @JsonBackReference is HERE**
     private Cuenta cuenta;
 
     public Long getId() {

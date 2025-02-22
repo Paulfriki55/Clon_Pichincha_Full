@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -76,5 +77,19 @@ public class CuentaService {
 
     public Cuenta obtenerCuentaPorNumero(String numeroCuenta) {
         return cuentaRepository.findByNumeroCuenta(numeroCuenta).orElse(null);
+    }
+
+    public List<Cuenta> obtenerTodasLasCuentas() {
+        return cuentaRepository.findAll();
+    }
+
+    @Transactional
+    public void depositar(String numeroCuenta, BigDecimal monto) {
+        Cuenta cuenta = cuentaRepository.findByNumeroCuenta(numeroCuenta)
+                .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada: " + numeroCuenta));
+        cuenta.setSaldo(cuenta.getSaldo().add(monto));
+        cuentaRepository.save(cuenta);
+        // Registrar la transacción como un tipo de depósito o similar si lo deseas en el futuro
+        // Por ahora, solo actualizamos el saldo.
     }
 }
